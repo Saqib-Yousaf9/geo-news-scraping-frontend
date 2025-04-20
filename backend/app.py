@@ -3,6 +3,8 @@ from flask_cors import CORS
 from flask_apscheduler import APScheduler
 from pymongo import MongoClient
 import time, io
+import os
+from dotenv import load_dotenv
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
@@ -11,23 +13,19 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import spacy
 from datetime import datetime
-
+load_dotenv()
 app = Flask(__name__)
-CORS(app)  # Allow all origins (or customize if needed)
-
-# if __name__ == '__main__':
-#     app.run(host='0.0.0.0', port=5000, debug=True)
+CORS(app) 
 
 scheduler = APScheduler()
 scheduler.init_app(app)
 
 
-# Load NLP
 nlp = spacy.load("en_core_web_sm")
 
-# MongoDB Setup
-MONGO_URI = "mongodb+srv://saqib:saqib@mernapp.ad3o26k.mongodb.net/?retryWrites=true&w=majority&appName=MERNapp"  # Or Atlas URI
-client = MongoClient(MONGO_URI)
+
+mongo_uri = os.getenv("MONGO_URI")
+client = MongoClient(mongo_uri)
 db = client['nap_db']
 collection = db['nap_data']
 
@@ -37,7 +35,7 @@ def init_driver():
     options.add_argument('--no-sandbox')
     return webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
-# Scraping Job
+
 def scrape_nap_data():
     driver = init_driver()
     driver.get("https://www.geo.tv/")

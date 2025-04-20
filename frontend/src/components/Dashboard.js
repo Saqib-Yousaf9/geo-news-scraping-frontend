@@ -9,14 +9,15 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(false);
 
   const fetchData = async () => {
-    const res = await fetch("http://localhost:5000/get_nap");
+    console.log("Base URL:", process.env.REACT_APP_API_BASE_URL);
+    const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/get_nap`);
     const json = await res.json();
     setData(json);
   };
 
   const scrapeNow = async () => {
     setLoading(true);
-    await fetch("http://localhost:5000/scrape_now");
+   await fetch(`${process.env.REACT_APP_API_BASE_URL}/scrape_now`);
     await fetchData();
     setLoading(false);
   };
